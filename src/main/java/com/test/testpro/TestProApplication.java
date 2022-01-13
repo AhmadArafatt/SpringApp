@@ -8,7 +8,9 @@ public class TestProApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(TestProApplication.class, args);
-        System.out.println("Welcome to Spring");
     }
+
+
+
 
 }
