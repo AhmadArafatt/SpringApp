@@ -1,4 +1,4 @@
-package repository;
+package com.test.testpro.repository;
 
 import com.test.testpro.model.Comment;
 import com.test.testpro.model.Vote;
