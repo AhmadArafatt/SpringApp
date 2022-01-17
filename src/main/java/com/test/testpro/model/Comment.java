@@ -1,7 +1,6 @@
 package com.test.testpro.model;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.aspectj.weaver.AjAttribute;
 
 import javax.persistence.Entity;
@@ -12,13 +11,21 @@ import java.util.ArrayList;
 
 @Entity
 @NoArgsConstructor
-@Data
+@Getter
+@Setter
+@RequiredArgsConstructor
+@ToString
 public class Comment extends Auditable {
     @Id
     @GeneratedValue
+
     private Long id;
+    @NonNull
     private String body;
     //link
     @ManyToOne
+    @NonNull
     private Link link;
-  }
+
+
+}
