@@ -19,22 +19,21 @@ public class TestProApplication {
         SpringApplication.run(TestProApplication.class, args);
     }
 
-    @Bean
+   // @Bean
     CommandLineRunner runner(LinkRepository linkRepository, CommentRepository commentRepository){
         return args->{
         //Create a link and save it to database
-        Link link=new Link("Getting statred with spring boot 2","https://www.danvega.dev/docs/spring-boot-2-docs/#_course_details");
-        linkRepository.save(link);
+                        Link link=new Link("Getting statred with spring boot 2","https://www.danvega.dev/docs/spring-boot-2-docs/#_course_details");
+                        linkRepository.save(link);
 
-        //Create a Comment and save it to database
-        Comment comment = new Comment("This is a nice link",link);
-        commentRepository.save(comment);
+                        //Create a Comment and save it to database
+                        Comment comment = new Comment("This is a nice link",link);
+                        commentRepository.save(comment);
 
-        //attach link to its comment
-        link.addComment(comment);
-        Link firstLink=linkRepository.findByTitle("Getting statred with spring boot 2");
-        System.out.println(firstLink.getTitle());
-
+                        //attach link to its comment
+                        link.addComment(comment);
+                        Link firstLink=linkRepository.findByTitle("Getting statred with spring boot 2");
+                        System.out.println(firstLink.getTitle());
         };
     }
 
