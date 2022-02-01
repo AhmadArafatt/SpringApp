@@ -1,10 +1,13 @@
 package com.test.testpro.Controller;
 
 
+import com.test.testpro.model.Comment;
 import com.test.testpro.model.Link;
+import com.test.testpro.repository.CommentRepository;
 import com.test.testpro.repository.LinkRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -18,17 +21,21 @@ import java.util.Optional;
 //@RequestMapping("LINKS")
 public class LinkController {
     private LinkRepository linkRepository;
+    private CommentRepository commentRepository;
 
-    private static final Logger logger =LoggerFactory.getLogger(LinkController.class);
-    public LinkController(LinkRepository linkRepository) {
+    public LinkController(LinkRepository linkRepository, CommentRepository commentRepository) {
         this.linkRepository = linkRepository;
+        this.commentRepository = commentRepository;
     }
 
-        @GetMapping("/")
-        public String list1(Model model){
+    private static final Logger logger =LoggerFactory.getLogger(LinkController.class);
+
+
+    @GetMapping("/")
+    public String list1(Model model){
         model.addAttribute("links",linkRepository.findAll());
         return "link/list";
-        }
+    }
 
 
 
@@ -46,15 +53,19 @@ public class LinkController {
 
 
     @GetMapping("/link/{id}")
-   public String read(@PathVariable Long id,Model model) {
-       Optional<Link> link = linkRepository.findById(id);// may or may not contain a non-null value
-       if( link.isPresent() ) {
-           model.addAttribute("link",link.get());
-           model.addAttribute("success", model.containsAttribute("success"));
-           return "/link/view";
-       } else {
-           return "redirect:/list";///go to list.html
-       }}
+    public String read(@PathVariable Long id,Model model) {
+        Optional<Link> link = linkRepository.findById(id);// may or may not contain a non-null value
+        if( link.isPresent() ) {
+            Link currentLink= link.get();
+            Comment comment=new Comment();
+            comment.setLink(currentLink);
+            model.addAttribute("link",currentLink);
+            model.addAttribute("comment",comment);
+            model.addAttribute("success", model.containsAttribute("success"));
+            return "/link/view";
+        } else {
+            return "redirect:/list";///go to list.html
+        }}
 
 
     @PutMapping("/{id}")
@@ -63,34 +74,47 @@ public class LinkController {
     }
     @DeleteMapping("/{id}")
     public void delete(@PathVariable long id) {
-     linkRepository.deleteById(id);
+        linkRepository.deleteById(id);
     }
 
     @GetMapping("/link/submit")
-   public String newLinkForm(Model model) {
-       model.addAttribute("link",new Link());
-       return "link/submit";
-   }
+    public String newLinkForm(Model model) {
+        model.addAttribute("link",new Link());
+        return "link/submit";
+    }
 
-   @PostMapping("/link/submit")
-   public String createLink(@Valid Link link, BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes) {
-      if(bindingResult.hasErrors())
-      {
-          logger.info("Validation error were found while submitting a new link");
-          model.addAttribute("link",link);
-          return "link/submit";
-      }
-      else{
+    @PostMapping("/link/submit")
+    public String createLink(@Valid Link link, BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes) {
+        if(bindingResult.hasErrors())
+        {
+            logger.info("Validation error were found while submitting a new link");
+            model.addAttribute("link",link);
+            return "link/submit";
+        }
+        else{
             //save our link
-          linkRepository.save(link);
-          logger.info("New link wae saved successfully");
-          redirectAttributes.addAttribute("id", link.getId()).addFlashAttribute("success",true);
-          // Flash attributes are an attributes that only live on the next template that you will visit
-          return "redirect:/link/{id}";
-      }
-
-
+            linkRepository.save(link);
+            logger.info("New link wae saved successfully");
+            redirectAttributes.addAttribute("id", link.getId()).addFlashAttribute("success",true);
+            // Flash attributes are an attributes that only live on the next template that you will visit
+            return "redirect:/link/{id}";
+        }
 
     }
 
+    @Secured("ROLE_USER")
+    @PostMapping("/link/comments")
+    public String addComment(@Valid Comment comment , BindingResult bindingResult){
+        if(bindingResult.hasErrors())
+        {
+            logger.info("There was a problem adding new comment");
+        }
+        else{
+            commentRepository.save(comment);
+            logger.info("New comment was saved successfully");
+        }
+
+        return "redirect:/link/"+ comment.getLink().getId();
     }
+
+}
