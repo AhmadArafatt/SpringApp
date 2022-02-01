@@ -44,6 +44,10 @@ public class Link extends Auditable {
     @OneToMany(mappedBy = "link")//one link mapped to many comments///mappedBy ==> using it i can say : give the link that this comment belongs to
     private List<Comment> comments=new ArrayList<>();
 
+    @OneToMany(mappedBy = "link")
+    private List<Vote> votes=new ArrayList<>();
+
+    private int voteCount=0;
 
     public void addComment(Comment comment)
     {
