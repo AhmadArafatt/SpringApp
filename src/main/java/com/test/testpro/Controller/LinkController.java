@@ -5,6 +5,8 @@ import com.test.testpro.model.Comment;
 import com.test.testpro.model.Link;
 import com.test.testpro.repository.CommentRepository;
 import com.test.testpro.repository.LinkRepository;
+import com.test.testpro.service.CommentService;
+import com.test.testpro.service.LinkService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.access.annotation.Secured;
@@ -20,12 +22,12 @@ import java.util.Optional;
 @Controller
 //@RequestMapping("LINKS")
 public class LinkController {
-    private LinkRepository linkRepository;
-    private CommentRepository commentRepository;
+    private LinkService linkService;
+    private CommentService commentService;
 
-    public LinkController(LinkRepository linkRepository, CommentRepository commentRepository) {
-        this.linkRepository = linkRepository;
-        this.commentRepository = commentRepository;
+    public LinkController(LinkService linkService, CommentService commentService) {
+        this.linkService = linkService;
+        this.commentService = commentService;
     }
 
     private static final Logger logger =LoggerFactory.getLogger(LinkController.class);
@@ -33,7 +35,7 @@ public class LinkController {
 
     @GetMapping("/")
     public String list1(Model model){
-        model.addAttribute("links",linkRepository.findAll());
+        model.addAttribute("links", linkService.findAll());
         return "link/list";
     }
 
@@ -48,13 +50,13 @@ public class LinkController {
     // CRUD
     @PostMapping("/create")
     public Link create(@ModelAttribute Link link) {
-        return linkRepository.save(link);
+        return linkService.save(link);
     }
 
 
     @GetMapping("/link/{id}")
     public String read(@PathVariable Long id,Model model) {
-        Optional<Link> link = linkRepository.findById(id);// may or may not contain a non-null value
+        Optional<Link> link = linkService.findById(id);// may or may not contain a non-null value
         if( link.isPresent() ) {
             Link currentLink= link.get();
             Comment comment=new Comment();
@@ -70,11 +72,11 @@ public class LinkController {
 
     @PutMapping("/{id}")
     public Link update(@ModelAttribute Link link) {
-        return linkRepository.save(link);
+        return linkService.save(link);
     }
     @DeleteMapping("/{id}")
     public void delete(@PathVariable long id) {
-        linkRepository.deleteById(id);
+        linkService.deleteById(id);
     }
 
     @GetMapping("/link/submit")
@@ -93,7 +95,7 @@ public class LinkController {
         }
         else{
             //save our link
-            linkRepository.save(link);
+            linkService.save(link);
             logger.info("New link wae saved successfully");
             redirectAttributes.addAttribute("id", link.getId()).addFlashAttribute("success",true);
             // Flash attributes are an attributes that only live on the next template that you will visit
@@ -110,7 +112,7 @@ public class LinkController {
             logger.info("There was a problem adding new comment");
         }
         else{
-            commentRepository.save(comment);
+            commentService.save(comment);
             logger.info("New comment was saved successfully");
         }
 

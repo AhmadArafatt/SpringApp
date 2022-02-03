@@ -19,13 +19,13 @@ import java.util.Map;
 
 @Component
 public class DatabaseLoader implements CommandLineRunner {
-    private LinkRepository linkRepository;
+    private LinkRepository linkService;
     private CommentRepository commentRepository;
     private UserRepository userRepository;
     private RoleRepository roleRepository;
 
-    public DatabaseLoader(LinkRepository linkRepository, CommentRepository commentRepository, UserRepository userRepository, RoleRepository roleRepository) {
-        this.linkRepository = linkRepository;
+    public DatabaseLoader(LinkRepository linkService, CommentRepository commentRepository, UserRepository userRepository, RoleRepository roleRepository) {
+        this.linkService = linkService;
         this.commentRepository = commentRepository;
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
@@ -51,7 +51,7 @@ public class DatabaseLoader implements CommandLineRunner {
 
         links.forEach((k,v) -> {
             Link link=new Link(k,v);
-            linkRepository.save(link);
+            linkService.save(link);
 
             Comment spring = new Comment("Thank you for this link related to Spring Boot. I love it, great post!",link);
             Comment security = new Comment("I love that you're talking about Spring Security",link);
@@ -67,7 +67,7 @@ public class DatabaseLoader implements CommandLineRunner {
             // we will do something with comments later
         });
 
-        long linkCount = linkRepository.count();
+        long linkCount = linkService.count();
         System.out.println("Number of links in the database: " + linkCount );
     }
 
