@@ -33,7 +33,7 @@
                       class="live-timestamp" th:text="${link.getPrettyTime()}">1 hour(s)
                 </time>
                 by
-                <a href="/" class="author" th:text="${link.createdBy}">therealdanvega</a>
+                <a th:href="@{'/u/'+${link.getUser().getAlias()}}" class="author" th:text="${link.getUser().getAlias()}">therealdanvega</a>
             </p>
 
 

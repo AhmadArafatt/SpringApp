@@ -17,4 +17,5 @@ public class AuditorAwareImp implements AuditorAware<String> {
                 return Optional.of("mastre@gmail.com");
             return Optional.of(((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getEmail());
     }//WE NEED TO FIND OUT WHAT THE USER IS LOGGED IN
+    // EMAIL IS UNIQUE
 }

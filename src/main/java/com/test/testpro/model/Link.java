@@ -6,10 +6,7 @@ import lombok.*;
 import org.hibernate.validator.constraints.URL;
 import org.ocpsoft.prettytime.PrettyTime;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -38,12 +35,14 @@ public class Link extends Auditable {
     private String url;
 
 
+//Users
+    @ManyToOne
+    private User user;//many links can be long to one user
 
-
-//comment
+//Comments
     @OneToMany(mappedBy = "link")//one link mapped to many comments///mappedBy ==> using it i can say : give the link that this comment belongs to
     private List<Comment> comments=new ArrayList<>();
-
+//Votes
     @OneToMany(mappedBy = "link")
     private List<Vote> votes=new ArrayList<>();
 

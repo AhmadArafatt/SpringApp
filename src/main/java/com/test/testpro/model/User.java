@@ -1,21 +1,25 @@
 package com.test.testpro.model;
 
+import com.test.testpro.model.validator.PasswordsMatch;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 import java.util.*;
 
 
+
+
 @Entity
+@NoArgsConstructor
 @Getter
 @Setter
 @RequiredArgsConstructor
-@ToString
-@NoArgsConstructor
+@PasswordsMatch
 public class User implements UserDetails {
     @Id
     @GeneratedValue
@@ -43,6 +47,41 @@ public class User implements UserDetails {
     ) // join table ==> setting a new table for users and roles (third table gets created)
     private Set<Role> roles = new HashSet<>();
 
+    @NonNull
+    @NotEmpty(message = "You must enter your First Name.")
+    private String firstName;
+
+
+    @NonNull
+    @NotEmpty(message = "You must enter your Last Name.")
+    private String lastName;
+
+    @NonNull
+    @Transient
+    @Setter(AccessLevel.NONE)
+    private String fullName;
+
+    @NonNull
+    @NotEmpty(message = "You must enter your alias.")
+    @Column(unique = true , nullable = false)
+    private String alias;
+
+    @Transient
+    @NotEmpty(message = "Please enter password confirmation.")
+    private String confirmPassword;
+
+    private String activationCode;
+    public User(@NonNull String email, @NonNull String password, @NonNull boolean enabled, @NonNull String firstName, @NonNull String lastName, @NonNull String alias) {
+        this.id = id;
+        this.email = email;
+        this.password = password;
+        this.enabled = enabled;
+
+        this.firstName = firstName;
+        this.lastName = lastName;
+
+        this.alias = alias;
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
